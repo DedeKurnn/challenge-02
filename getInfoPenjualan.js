@@ -38,20 +38,68 @@ const dataPenjualanNovel = [
 ];
 
 const getInfoPenjualan = (dataPenjualan) => {
-    let totalKeuntungan;
-    let totalModal;
-    let penulisTerlaris;
+    // Menghitung total keuntungan dan total modal
+    let totalKeuntungan = 0;
+    let totalModal = 0;
 
     for (const data of dataPenjualan) {
-        totalKeuntungan += data.totalTerjual * data.hargaJual;
+        totalKeuntungan += (data.hargaJual - data.hargaBeli) * data.totalTerjual;
         totalModal += data.hargaBeli * (data.totalTerjual + data.sisaStok);
     }
+    // Mencari persentase keuntungan
+    const persentaseKeuntungan = totalKeuntungan / totalModal;
+    // Memformat hasil menjadi mata uang
+    const formattedTotalKeuntungan = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    }).format(totalKeuntungan);
 
-    const produkBukuTerlaris = dataPenjualan.reduce((penjualanTerbanyak, penjualanSekarang) => {
-        return penjualanSekarang.totalTerjual > penjualanTerbanyak.totalTerjual
-            ? penjualanSekarang
-            : penjualanTerbanyak;
+    const formattedTotalModal = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    }).format(totalModal);
+
+    const formattedPersentaseKeuntungan = new Intl.NumberFormat("id-ID", {
+        style: "percent",
+    }).format(persentaseKeuntungan);
+
+    // Mencari produk buku terlaris
+    const produkBukuTerlaris = dataPenjualan.reduce((prevData, currentData) => {
+        let penulisTerlaris;
+        if (prevData.penulis === currentData.penulis) {
+            penulisTerlaris = prevData.totalTerjual + currentData.totalTerjual;
+        }
+        return currentData.totalTerjual > prevData.totalTerjual ? currentData : prevData;
     }, dataPenjualan[0]);
 
-    const persentaseKeuntungan = (totalKeuntungan / totalModal) * 100;
+    // Mencari penulis paling laris
+    const totalPenjualanPenulis = [];
+
+    dataPenjualan.forEach((item) => {
+        const { penulis, totalTerjual } = item;
+        const existingItem = totalPenjualanPenulis.find((element) => element.penulis === penulis);
+
+        if (existingItem) {
+            existingItem.totalTerjual += totalTerjual;
+        } else {
+            totalPenjualanPenulis.push({ penulis, totalTerjual });
+        }
+    });
+
+    const penulisTerlaris = totalPenjualanPenulis.reduce((prev, current) => {
+        return prev.totalTerjual > current.totalTerjual ? prev : current;
+    });
+
+    const result = {
+        totalKeuntungan: formattedTotalKeuntungan,
+        totalModal: formattedTotalModal,
+        persentaseKeuntungan: formattedPersentaseKeuntungan,
+        produkBukuTerlaris: produkBukuTerlaris.namaProduk,
+        penulisTerlaris: penulisTerlaris.penulis,
+    };
+    return result;
 };
+
+console.log(getInfoPenjualan(dataPenjualanNovel));
