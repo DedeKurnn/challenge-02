@@ -67,10 +67,6 @@ const getInfoPenjualan = (dataPenjualan) => {
 
     // Mencari produk buku terlaris
     const produkBukuTerlaris = dataPenjualan.reduce((prevData, currentData) => {
-        let penulisTerlaris;
-        if (prevData.penulis === currentData.penulis) {
-            penulisTerlaris = prevData.totalTerjual + currentData.totalTerjual;
-        }
         return currentData.totalTerjual > prevData.totalTerjual ? currentData : prevData;
     }, dataPenjualan[0]);
 
