@@ -47,7 +47,7 @@ const getInfoPenjualan = (dataPenjualan) => {
         totalModal += data.hargaBeli * (data.totalTerjual + data.sisaStok);
     }
     // Mencari persentase keuntungan
-    const persentaseKeuntungan = totalKeuntungan / totalModal;
+    const persentaseKeuntungan = ((totalKeuntungan / totalModal) * 100).toFixed(2);
     // Memformat hasil menjadi mata uang
     const formattedTotalKeuntungan = new Intl.NumberFormat("id-ID", {
         style: "currency",
@@ -60,10 +60,6 @@ const getInfoPenjualan = (dataPenjualan) => {
         currency: "IDR",
         minimumFractionDigits: 0,
     }).format(totalModal);
-
-    const formattedPersentaseKeuntungan = new Intl.NumberFormat("id-ID", {
-        style: "percent",
-    }).format(persentaseKeuntungan);
 
     // Mencari produk buku terlaris
     const produkBukuTerlaris = dataPenjualan.reduce((prevData, currentData) => {
@@ -91,7 +87,7 @@ const getInfoPenjualan = (dataPenjualan) => {
     const result = {
         totalKeuntungan: formattedTotalKeuntungan,
         totalModal: formattedTotalModal,
-        persentaseKeuntungan: formattedPersentaseKeuntungan,
+        persentaseKeuntungan: `${persentaseKeuntungan}%`,
         produkBukuTerlaris: produkBukuTerlaris.namaProduk,
         penulisTerlaris: penulisTerlaris.penulis,
     };

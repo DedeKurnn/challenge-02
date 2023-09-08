@@ -27,11 +27,13 @@ const dataPenjualanPakAldi = [
 
 function getTotalPenjualan(dataPenjualan) {
     if (!Array.isArray(dataPenjualan)) {
-        throw new Error("Data harus berupa array");
+        console.error("Data harus berupa array");
+        return;
     }
 
     if (!dataPenjualan.every((item) => typeof item === "object")) {
-        throw new Error("Array harus berisi objek");
+        console.error("Array harus berisi objek");
+        return;
     }
 
     return dataPenjualan.reduce((acc, data) => {
